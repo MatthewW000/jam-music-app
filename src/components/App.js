@@ -18,10 +18,12 @@ const App = () => {
   ]; 
 
   const [token, setToken] = useState('');  
-  const [genres, setGenres] = useState({selectedGenre: '', listOfGenresFromAPI: []});
-  const [playlist, setPlaylist] = useState({selectedPlaylist: '', listOfPlaylistFromAPI: []});
-  const [tracks, setTracks] = useState({selectedTrack: '', listOfTracksFromAPI: []});
-  const [trackDetail, setTrackDetail] = useState(null);
+  // const [songInfo, set] = useState({selectedGenre: '', listOfGenresFromAPI: []});
+  // const [playlist, setPlaylist] = useState({selectedPlaylist: '', listOfPlaylistFromAPI: []});
+  // const [tracks, setTracks] = useState({selectedTrack: '', listOfTracksFromAPI: []});
+  const [trackDetail, setTrackDetail] = useState({ 
+   
+  });
 
   useEffect(() => {
 
@@ -36,77 +38,79 @@ const App = () => {
     .then(tokenResponse => {      
       setToken(tokenResponse.data.access_token);
 
-      axios('https://api.spotify.com/v1/browse/categories?locale=sv_US', {
+      axios('https://api.spotify.com/v1/search?q=peaches&type=track', {
         method: 'GET',
         headers: { 'Authorization' : 'Bearer ' + tokenResponse.data.access_token}
       })
-      .then (genreResponse => {        
-        setGenres({
-          selectedGenre: genres.selectedGenre,
-          listOfGenresFromAPI: genreResponse.data.categories.items
+      .then (songResponse => {        
+        setTrackDetail({
+          artist: songResponse.data.tracks.items[0].artists[0].name,
+          imageUrl: songResponse.data.tracks.items[0].album.images[1].url,
+          trackId: songResponse.data.tracks.items[0].id,
+          trackTitle: ''
         })
       });
       
     });
 
-  }, [genres.selectedGenre, spotify.ClientId, spotify.ClientSecret]); 
+  }, [spotify.ClientId, spotify.ClientSecret]); 
 
-  const genreChanged = val => {
-    setGenres({
-      selectedGenre: val, 
-      listOfGenresFromAPI: genres.listOfGenresFromAPI
-    });
+  // const genreChanged = val => { //song change
+  //   setGenres({
+  //     selectedGenre: val, 
+  //     listOfGenresFromAPI: genres.listOfGenresFromAPI
+  //   });
 
-    axios(`https://api.spotify.com/v1/browse/categories/${val}/playlists?limit=10`, {
-      method: 'GET',
-      headers: { 'Authorization' : 'Bearer ' + token}
-    })
-    .then(playlistResponse => {
-      setPlaylist({
-        selectedPlaylist: playlist.selectedPlaylist,
-        listOfPlaylistFromAPI: playlistResponse.data.playlists.items
-      })
-    });
+    // axios(`https://api.spotify.com/v1/browse/categories/${val}/playlists?limit=10`, {
+    //   method: 'GET',
+    //   headers: { 'Authorization' : 'Bearer ' + token}
+    // })
+    // .then(playlistResponse => {
+    //   setPlaylist({
+    //     selectedPlaylist: playlist.selectedPlaylist,
+    //     listOfPlaylistFromAPI: playlistResponse.data.playlists.items
+    //   })
+    // });
 
-    console.log(val);
-  }
+  //   console.log(val);
+  // }
 
-  const playlistChanged = val => {
-    console.log(val);
-    setPlaylist({
-      selectedPlaylist: val,
-      listOfPlaylistFromAPI: playlist.listOfPlaylistFromAPI
-    });
-  }
+  // const playlistChanged = val => {
+  //   console.log(val);
+  //   setPlaylist({
+  //     selectedPlaylist: val,
+  //     listOfPlaylistFromAPI: playlist.listOfPlaylistFromAPI
+  //   });
+  // }
 
-  const buttonClicked = e => {
-    e.preventDefault();
+  // const buttonClicked = e => {
+  //   e.preventDefault();
 
-    axios(`https://api.spotify.com/v1/playlists/${playlist.selectedPlaylist}/tracks?limit=10`, {
-      method: 'GET',
-      headers: {
-        'Authorization' : 'Bearer ' + token
-      }
-    })
-    .then(tracksResponse => {
-      setTracks({
-        selectedTrack: tracks.selectedTrack,
-        listOfTracksFromAPI: tracksResponse.data.items
-      })
-    });
-  }
+  //   axios(`https://api.spotify.com/v1/playlists/${playlist.selectedPlaylist}/tracks?limit=10`, {
+  //     method: 'GET',
+  //     headers: {
+  //       'Authorization' : 'Bearer ' + token
+  //     }
+  //   })
+  //   .then(tracksResponse => {
+  //     setTracks({
+  //       selectedTrack: tracks.selectedTrack,
+  //       listOfTracksFromAPI: tracksResponse.data.items
+  //     })
+  //   });
+  // }
 
-  const listboxClicked = val => {
+  // const listboxClicked = val => {
 
-    const currentTracks = [...tracks.listOfTracksFromAPI];
+  //   const currentTracks = [...tracks.listOfTracksFromAPI];
 
-    const trackInfo = currentTracks.filter(t => t.track.id === val);
+  //   const trackInfo = currentTracks.filter(t => t.track.id === val);
 
-    setTrackDetail(trackInfo[0].track);
+  //   setTrackDetail(trackInfo[0].track);
 
 
 
-  }
+  // }
 
   
   
